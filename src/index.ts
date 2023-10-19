@@ -39,12 +39,12 @@ if (!config.testMode) {
   // getNewEditsForInstance every 10 minutes
   schedule("*/10 * * * *", () => {
     for (const instance of Object.values(instances)) {
-      getNewEditsForInstance(instance);
+      getNewEditsForInstance(instance, client);
     }
   });
 } else {
   Logger.warn("Test mode enabled");
   for (const instance of Object.values(instances)) {
-    getNewEditsForInstance(instance);
+    getNewEditsForInstance(instance, client);
   }
 }

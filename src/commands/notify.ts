@@ -17,16 +17,10 @@ export const notify: CommandInt = {
         .setName("instance")
         .setDescription("Stash Instance")
         .setRequired(true)
-        .addChoices(
-          {
-            name: "StashDB.org",
-            value: "StashDB",
-          },
-          {
-            name: "FansDB.xyz",
-            value: "FansDB",
-          }
-        )
+        .addChoices({
+          name: "FansDB.xyz",
+          value: "FansDB",
+        })
     )
     .addStringOption(option =>
       option

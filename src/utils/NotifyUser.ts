@@ -2,8 +2,7 @@ import { User, Comment, Edit, Vote } from "../types/Stash";
 import { prepare } from "./db";
 import Logger from "./logger";
 import { StashInstance } from "./StashInstance";
-import { config } from "./config";
-import axios from "axios";
+import { Client, EmbedBuilder } from "discord.js";
 
 export enum notifyTypes {
     COMMENTS = "comment",
@@ -55,24 +54,21 @@ export class NotifyUser {
         await this.save();
     }
     public checkPreference = async (type: notifyTypes) => this[type];
-    public async notify (user: User, message: string, instance: StashInstance) {
+    public async notify (user: User, message: string, instance: StashInstance, client: Client) {
         Logger.info(`Notifying ${user.name} (${user.id})`);
-        // post to discord
-        if (config.testMode) return Logger.debug("Test mode - not posting to discord");
-        axios({
-            method: "POST",
-            url: config.discord.webhook,
-            data: {
-                username: `${instance.name}-Notify`,
-                avatar_url: `${instance.avatar}`,
-                content: `<@${this?.discordId}>: ${message}`,
-            }
-        });
+        if (!this.discordId) return Logger.debug(`No discord id for user ${user.name} (${user.id})`);
+        const discUser = await client.users.fetch(this.discordId);
+        if (!discUser) return Logger.debug(`Could not find user with id ${this.discordId}`);
+        // craft discord message
+        const embed = new EmbedBuilder()
+            .setAuthor({ name: `${instance.name} - Notify`, iconURL: instance.avatar })
+            .setDescription(message);
+        await discUser.send({ embeds: [embed] });
     }
-    public async notifyComment(edit: Edit, comments: Comment[], instance: StashInstance) {
+    public async notifyComment(edit: Edit, comments: Comment[], instance: StashInstance, client: Client) {
         if (comments.length == 0) return;
         // check if user is on notify list
-        //if (!this.comment) return;
+        if (!this.comment) return;
         // add to notified list
         const notifyComments = [];
         for (const comment of comments) {
@@ -86,17 +82,17 @@ export class NotifyUser {
         // skip notifying if all notified
         if (!notifyComments.length) return;
         const url = `${instance.baseurl}/edits/${edit.id}`;
-        await this.notify(edit.user, `You have ${notifyComments.length} new comment${notifyComments.length == 1 ? "" : "s"} on your [edit](${url})`, instance);
+        await this.notify(edit.user, `You have ${notifyComments.length} new comment${notifyComments.length == 1 ? "" : "s"} on your [edit](${url})`, instance, client);
     }
-    public async notifyVote(Edit: Edit, Vote: Vote, instance: StashInstance) {
+    public async notifyVote(Edit: Edit, Vote: Vote, instance: StashInstance, client: Client) {
         // check if user is on notify list
-        //if (!this.vote) return;
+        if (!this.vote) return;
         // check if already notified
         const notified = await prepare("get", "SELECT * FROM notifiedVotes WHERE editId = ? AND userId = ? AND date = ?", [Edit.id, Vote.user.id, Edit.updated]);
         if (notified) return;
         // add to notified list
         await prepare("run", "INSERT INTO notifiedVotes (editId, userId, date) VALUES (?, ?, ?)", [Edit.id, Vote.user.id, Edit.updated]);
         const url = `${instance.baseurl}/edits/${Edit.id}`;
-        await this.notify(Vote.user, `[edit](${url}) has been edited since you last voted on it`, instance);
+        await this.notify(Vote.user, `[edit](${url}) has been edited since you last voted on it`, instance, client);
     }
 }
