@@ -28,13 +28,11 @@ export const onReady = async (client: Client): Promise<void> => {
       }
     );
   });
-  for (const guild of config.discord.guilds) {
-    await rest.put(
-      Routes.applicationGuildCommands(config.discord.clientId, guild),
-      {
-        body: commandData,
-      }
-    );
-  }
+  await rest.put(
+    Routes.applicationCommands(config.discord.clientId),
+    {
+      body: commandData,
+    }
+  );
   Logger.info(client.user.tag + " is ready!");
 };

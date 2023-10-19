@@ -17,16 +17,10 @@ export const checknotify: CommandInt = {
         .setName("instance")
         .setDescription("Stash Instance")
         .setRequired(true)
-        .addChoices(
-          {
-            name: "StashDB.org",
-            value: "StashDB",
-          },
-          {
-            name: "FansDB.xyz",
-            value: "FansDB",
-          }
-        )
+        .addChoices({
+          name: "FansDB.xyz",
+          value: "FansDB",
+        })
     ) as SlashCommandBuilder,
   run: async interaction => {
     // check username

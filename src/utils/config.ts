@@ -6,7 +6,6 @@ interface Config {
     discord: {
         token: string;
         clientId: string;
-        guilds: string[];
         webhook: string;
     };
     database: {
