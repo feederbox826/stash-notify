@@ -13,7 +13,7 @@ export const onInteraction = async (
             err => {
               Logger.error("caught error in " + interaction.commandName);
               Logger.error(err);
-              interaction.reply({ content: "An error occured" });
+              interaction.reply({ content: "An error occured", ephemeral: true });
             }
           );
           break;

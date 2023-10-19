@@ -31,17 +31,17 @@ export const notify: CommandInt = {
       option
         .setName("comments")
         .setDescription("Notify on new comments on edits")
-        .setRequired(false)
+        .setRequired(true)
     ).addBooleanOption(option => 
       option
         .setName("votes")
         .setDescription("Notify on updates to voted edits")
-        .setRequired(false)
+        .setRequired(true)
     ) as SlashCommandBuilder,
   run: async interaction => {
     // check username
     const username = interaction.options.getString("username");
-    const instanceName = interaction.options.getString("Instance");
+    const instanceName = interaction.options.getString("instance");
     const instance = instances[instanceName];
     // resolve username
     const stashUserID = await instance.getUserID(username);
@@ -53,7 +53,7 @@ export const notify: CommandInt = {
       });
     }
     // create user
-    const user = new NotifyUser(stashUserID, interaction.user.id);
+    const user = new NotifyUser(stashUserID, interaction.user.id, instance);
     // pull options
     const comments = interaction.options.getBoolean("comments");
     const votes = interaction.options.getBoolean("votes");

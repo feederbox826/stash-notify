@@ -14,9 +14,9 @@ export interface Vote {
 }
 export interface Edit {
     comments: Comment[];
+    created: string;
     updated: string;
     id: string;
-    created: Date;
     user: User;
     votes: Vote[];
 }

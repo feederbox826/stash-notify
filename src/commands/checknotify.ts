@@ -24,7 +24,7 @@ export const checknotify: CommandInt = {
     ) as SlashCommandBuilder,
   run: async interaction => {
     // check username
-    const instanceName = interaction.options.getString("Instance");
+    const instanceName = interaction.options.getString("instance");
     const instance = instances[instanceName];
     // create user
     const user = await NotifyUser.createByDiscordInstance(interaction.user.id, instance);
@@ -34,12 +34,14 @@ export const checknotify: CommandInt = {
         ephemeral: true,
       });
     }
+    await user.update();
     Logger.debug(JSON.stringify(user));
     // get preferences
     const { comment, vote } = user;
+    const boolToEmoji = (bool: boolean) => bool ? "✅" : "❌";
     // success
     return interaction.reply({
-      content: `Notification preferences on ${instance.name} - Comments: ${comment}, Votes: ${vote}`,
+      content: `Notification preferences on ${instance.name} - Comments: ${boolToEmoji(comment)}, Votes: ${boolToEmoji(vote)}`,
       ephemeral: true,
     });
   },
