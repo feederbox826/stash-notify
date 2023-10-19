@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "incremental": true,
+    "outDir": "./dist",
+    "target": "es2020",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "esModuleInterop": true
+  }
+}
