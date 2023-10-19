@@ -15,7 +15,7 @@ let db;
 })();
 
 export async function setup() {
-    await db.run("CREATE TABLE IF NOT EXISTS notifyUser (userId TEXT, discordId TEXT, instance TEXT, comment BOOLEAN, vote BOOLEAN)");
+    await db.run("CREATE TABLE IF NOT EXISTS notifyUser (userId TEXT UNIQUE, discordId TEXT, instance TEXT, comment BOOLEAN, vote BOOLEAN)");
     await db.run("CREATE TABLE IF NOT EXISTS notifiedComments (commentId TEXT)");
     await db.run("CREATE TABLE IF NOT EXISTS notifiedVotes (editId TEXT, userId TEXT, date TEXT)");
     Logger.info("Database opened");

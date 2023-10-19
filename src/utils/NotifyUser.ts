@@ -24,14 +24,7 @@ export class NotifyUser {
         this.id = id;
         this.discordId = discordId;
         this.instance = instance;
-        this.fetchUserByID(this.id).then(dbUser => {
-            if (dbUser) {
-                this.exists = true;
-                this.comment = Boolean(dbUser.comment);
-                this.vote = Boolean(dbUser.vote);
-                this.discordId = dbUser.discordId;
-            }
-        });
+        this.update();
     }
     public static async createByDiscordInstance (discordId: string, instance: StashInstance) {
         const res = await prepare("get", "SELECT * FROM notifyUser WHERE discordId = ? AND instance = ?", [discordId, instance.name]);
@@ -42,12 +35,25 @@ export class NotifyUser {
         const res = await prepare("get", "SELECT * FROM notifyUser WHERE userId = ?", [value]);
         return res;
     }
+    public async update() {
+        return this.fetchUserByID(this.id)
+            .then(user => {
+                if (user) {
+                    this.exists = true;
+                    this.comment = Boolean(user.comment);
+                    this.vote = Boolean(user.vote);
+                    this.discordId = user.discordId;
+                }
+            });
+    }
     public async save () {
-        if (this.exists) {
+        const existingUser = await this.fetchUserByID(this.id);
+        if (existingUser) {
             await prepare("run", "UPDATE notifyUser SET comment = ?, vote = ? WHERE userId = ?", [this.comment, this.vote, this.id]);
         } else {
-            await prepare("run", "INSERT INTO notifyUser (userId, discordId, instance, comment, vote) VALUES (?, ?, ?, ?, ?)", [this.id, this.discordId, this.instance, this.comment, this.vote]);
+            await prepare("run", "INSERT INTO notifyUser (userId, discordId, instance, comment, vote) VALUES (?, ?, ?, ?, ?)", [this.id, this.discordId, this.instance.name, this.comment, this.vote]);
         }
+        this.update();
     }
     public async modifyPreference(type: notifyTypes, value: boolean) {
         this[type] = value;
@@ -74,7 +80,7 @@ export class NotifyUser {
         for (const comment of comments) {
             // check if already notified
             const notified = await prepare("all", "SELECT * FROM notifiedComments WHERE commentId = ?", [comment.id]);
-            if (notified) continue;
+            if (notified.length) continue;
             // add to notification list
             await prepare("run", "INSERT INTO notifiedComments (commentId) VALUES (?)", [comment.id]);
             notifyComments.push(comment);

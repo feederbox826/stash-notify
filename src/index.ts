@@ -20,7 +20,16 @@ const client = new Client({
 });
 
 // discord events
-client.on("ready", async () => await onReady(client));
+client.on("ready", async () => {
+  await onReady(client);
+  // start scheduler
+  if (config.testMode) {
+    Logger.warn("Test mode enabled");
+    for (const instance of Object.values(instances)) {
+      getNewEditsForInstance(instance, client);
+    }
+  }
+});
 client.on(
   "interactionCreate",
   async interaction => await onInteraction(interaction)
@@ -28,6 +37,11 @@ client.on(
 client.on("rateLimit", data => {
   Logger.debug("rate limited" + JSON.stringify(data));
   Logger.debug("lifted in " + data.timeout);
+});
+client.on("stash-manual-fetch", async () => {
+  for (const instance of Object.values(instances)) {
+    getNewEditsForInstance(instance, client);
+  }
 });
 
 // startup
@@ -42,9 +56,4 @@ if (!config.testMode) {
       getNewEditsForInstance(instance, client);
     }
   });
-} else {
-  Logger.warn("Test mode enabled");
-  for (const instance of Object.values(instances)) {
-    getNewEditsForInstance(instance, client);
-  }
 }
