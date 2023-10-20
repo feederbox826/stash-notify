@@ -51,7 +51,7 @@ setup()
 // start setup
 if (!config.testMode) {
   // getNewEditsForInstance every 10 minutes
-  schedule("*/10 * * * *", () => {
+  schedule("*/5 * * * *", () => {
     for (const instance of Object.values(instances)) {
       getNewEditsForInstance(instance, client);
     }
