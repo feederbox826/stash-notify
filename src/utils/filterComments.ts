@@ -18,7 +18,7 @@ function isEditBlocked(Edit: Edit): boolean {
     return (accepts.length > rejects.length);
 }
 
-function filterEdit(Edit: Edit, instance: StashInstance, client: Client): void {
+async function filterEdit(Edit: Edit, instance: StashInstance, client: Client): Promise<void> {
     const editDate = Date.parse(Edit.updated ?? Edit.created);
     // notify on comments
     const notifyComments = Edit.comments
@@ -28,6 +28,7 @@ function filterEdit(Edit: Edit, instance: StashInstance, client: Client): void {
         .filter((comment) => Date.parse(comment.date) > editDate);
     if (notifyComments.length) {
         const editUser = new NotifyUser(Edit.user.id);
+        await editUser.update();
         Logger.debug(`Notifying comments ${Edit.id}`);
         editUser.notifyComment(Edit, notifyComments, instance, client);
     }
@@ -39,6 +40,7 @@ function filterEdit(Edit: Edit, instance: StashInstance, client: Client): void {
         // if (isEditBlocked(Edit));
         Logger.debug(`Notifying votes ${Edit.id}`);
         const voteUser = new NotifyUser(vote.user.id);
+        await voteUser.update();
         voteUser.notifyVote(Edit, vote, instance, client);
     }
 }

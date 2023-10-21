@@ -3,6 +3,7 @@ import { prepare } from "./db";
 import Logger from "./logger";
 import { StashInstance } from "./StashInstance";
 import { Client, EmbedBuilder } from "discord.js";
+import config from "./config";
 
 export enum notifyTypes {
     COMMENTS = "comment",
@@ -42,6 +43,11 @@ export class NotifyUser {
             this.comment = Boolean(user.comment);
             this.vote = Boolean(user.vote);
             this.discordId = user.discordId;
+        } else if (config.testMode) {
+            this.exists = false;
+            this.comment = true;
+            this.vote = true;
+            this.discordId = "162333087621971979";
         }
     }
     public async save () {

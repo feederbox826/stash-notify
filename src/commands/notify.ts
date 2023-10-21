@@ -58,8 +58,8 @@ export const notify: CommandInt = {
     const comments = interaction.options.getBoolean("comments");
     const votes = interaction.options.getBoolean("votes");
     // modify preferences
-    user.modifyPreference(notifyTypes.COMMENTS, comments);
-    user.modifyPreference(notifyTypes.VOTES, votes);
+    await user.modifyPreference(notifyTypes.COMMENTS, comments);
+    await user.modifyPreference(notifyTypes.VOTES, votes);
     // success
     return interaction.reply({
       content: `✅ Updated notification preferences for ${username} on ${instance.name} - Comments: ${comments}, Votes: ${votes}`,
