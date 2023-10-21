@@ -36,15 +36,13 @@ export class NotifyUser {
         return res;
     }
     public async update() {
-        return this.fetchUserByID(this.id)
-            .then(user => {
-                if (user) {
-                    this.exists = true;
-                    this.comment = Boolean(user.comment);
-                    this.vote = Boolean(user.vote);
-                    this.discordId = user.discordId;
-                }
-            });
+        const user = await this.fetchUserByID(this.id);
+        if (user) {
+            this.exists = true;
+            this.comment = Boolean(user.comment);
+            this.vote = Boolean(user.vote);
+            this.discordId = user.discordId;
+        }
     }
     public async save () {
         const existingUser = await this.fetchUserByID(this.id);
