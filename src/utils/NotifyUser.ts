@@ -72,7 +72,7 @@ export class NotifyUser {
     public async notifyComment(edit: Edit, comments: Comment[], instance: StashInstance, client: Client) {
         if (comments.length == 0) return;
         // check if user is on notify list
-        if (!this.comment) return;
+        if (!this.comment) return Logger.debug(`User ${this.id} has comments disabled`);
         // add to notified list
         const notifyComments = [];
         for (const comment of comments) {
@@ -90,7 +90,7 @@ export class NotifyUser {
     }
     public async notifyVote(Edit: Edit, Vote: Vote, instance: StashInstance, client: Client) {
         // check if user is on notify list
-        if (!this.vote) return;
+        if (!this.vote) return Logger.debug(`User ${this.id} has votes disabled`);
         // check if already notified
         const notified = await prepare("get", "SELECT * FROM notifiedVotes WHERE editId = ? AND userId = ? AND date = ?", [Edit.id, Vote.user.id, Edit.updated]);
         if (notified) return;
