@@ -7,6 +7,7 @@ interface Config {
         token: string;
         clientId: string;
         webhook: string;
+        guilds: string[];
     };
     database: {
         filename: string;

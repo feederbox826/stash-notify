@@ -18,7 +18,7 @@ export const notify: CommandInt = {
         .setDescription("Stash Instance")
         .setRequired(true)
         .addChoices({
-          name: "FansDB.xyz",
+          name: "FansDB.cc",
           value: "FansDB",
         })
     )
