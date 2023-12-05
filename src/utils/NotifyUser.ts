@@ -50,17 +50,16 @@ export class NotifyUser {
             this.discordId = "162333087621971979";
         }
     }
-    public async save () {
+    public async updatePreference(comment: boolean, vote: boolean) {
+        this.comment = comment;
+        this.vote = vote;
         const existingUser = await this.fetchUserByID(this.id);
         if (existingUser) {
-            await prepare("run", "UPDATE notifyUser SET comment = ?, vote = ? WHERE userId = ?", [this.comment, this.vote, this.id]);
+            await prepare("run", "UPDATE notifyUser SET comment = ?, vote = ? WHERE userId = ?", [comment, vote, this.id]);
         } else {
-            await prepare("run", "INSERT INTO notifyUser (userId, discordId, instance, comment, vote) VALUES (?, ?, ?, ?, ?)", [this.id, this.discordId, this.instance.name, this.comment, this.vote]);
+            await prepare("run", "INSERT INTO notifyUser (userId, discordId, instance, comment, vote) VALUES (?, ?, ?, ?, ?)", [this.id, this.discordId, this.instance.name, comment, vote]);
         }
-        this.update();
-    }
-    public modifyPreference(type: notifyTypes, value: boolean) {
-        this[type] = value;
+        await this.update();
     }
     public checkPreference = async (type: notifyTypes) => this[type];
     public async notify (user: User, message: string, instance: StashInstance, client: Client) {

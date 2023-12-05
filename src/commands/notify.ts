@@ -6,7 +6,7 @@ import { CommandInt } from "../types/CommandInt";
 import Logger from "../utils/logger";
 // config
 import { instances } from "../utils/config";
-import { NotifyUser, notifyTypes } from "../utils/NotifyUser";
+import { NotifyUser } from "../utils/NotifyUser";
 
 export const notify: CommandInt = {
   data: new SlashCommandBuilder()
@@ -58,9 +58,7 @@ export const notify: CommandInt = {
     const comments = interaction.options.getBoolean("comments");
     const votes = interaction.options.getBoolean("votes");
     // modify preferences
-    user.modifyPreference(notifyTypes.COMMENTS, comments);
-    user.modifyPreference(notifyTypes.VOTES, votes);
-    await user.save();
+    user.updatePreference(comments, votes);
     const boolToEmoji = (bool: boolean) => bool ? "✅" : "❌";
     // success
     return interaction.reply({
