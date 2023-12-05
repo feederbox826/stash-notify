@@ -59,9 +59,8 @@ export class NotifyUser {
         }
         this.update();
     }
-    public async modifyPreference(type: notifyTypes, value: boolean) {
+    public modifyPreference(type: notifyTypes, value: boolean) {
         this[type] = value;
-        await this.save();
     }
     public checkPreference = async (type: notifyTypes) => this[type];
     public async notify (user: User, message: string, instance: StashInstance, client: Client) {

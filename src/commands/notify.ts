@@ -58,9 +58,9 @@ export const notify: CommandInt = {
     const comments = interaction.options.getBoolean("comments");
     const votes = interaction.options.getBoolean("votes");
     // modify preferences
-    await user.modifyPreference(notifyTypes.COMMENTS, comments);
-    await user.modifyPreference(notifyTypes.VOTES, votes);
-    await user.update();
+    user.modifyPreference(notifyTypes.COMMENTS, comments);
+    user.modifyPreference(notifyTypes.VOTES, votes);
+    await user.save();
     const boolToEmoji = (bool: boolean) => bool ? "✅" : "❌";
     // success
     return interaction.reply({
