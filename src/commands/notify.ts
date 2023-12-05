@@ -60,9 +60,11 @@ export const notify: CommandInt = {
     // modify preferences
     await user.modifyPreference(notifyTypes.COMMENTS, comments);
     await user.modifyPreference(notifyTypes.VOTES, votes);
+    await user.update();
+    const boolToEmoji = (bool: boolean) => bool ? "✅" : "❌";
     // success
     return interaction.reply({
-      content: `✅ Updated notification preferences for ${username} on ${instance.name} - Comments: ${comments}, Votes: ${votes}`,
+      content: `✅ Updated notification preferences for ${username} on ${instance.name} - Comments: ${boolToEmoji(comments)}, Votes: ${boolToEmoji(votes)}`,
       ephemeral: true,
     });
   },
